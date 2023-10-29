@@ -11,6 +11,11 @@
 <link href="../static/css/bootstrap.min.css" rel="stylesheet">
 <script src="../static/js/jquery-3.7.1.min.js"></script>
 <script src="../static/js/bootstrap.min.js"></script>
+
+<!--Bootstrap table-->
+<link rel="stylesheet" href="../static/css/bootstrap-table.min.css">
+<script src="../static/js/bootstrap-table.min.js"></script>
+<script src="../static/js/bootstrap-table-zh-CN.min.js"></script>
 <style type="text/css">
     .card {
         position: relative;
@@ -34,7 +39,7 @@
     }
 
     .custom-modal .modal-content {
-        height: 1000px; /* 设置高度 */
+        height: 1200px; /* 设置高度 */
     }
 
     .json-td {
@@ -82,7 +87,7 @@
     </div>
 </div>
 <div id="detailsModal" class="modal custom-modal" tabindex="-1">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
                 <div class="row-container">
@@ -92,17 +97,17 @@
             </div>
             <div class="modal-body">
                 <table id="modalData" class="table" style="white-space: pre-wrap">
-                    <thead>
-                    <tr>
-                        <th>元素编码</th>
-                        <th>元素名称</th>
-                        <th>是否必填</th>
-                        <th>数据类型</th>
-                        <th>OID</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
+<!--                    <thead>-->
+<!--                    <tr>-->
+<!--                        <th>元素编码</th>-->
+<!--                        <th>元素名称</th>-->
+<!--                        <th>是否必填</th>-->
+<!--                        <th>数据类型</th>-->
+<!--                        <th>OID</th>-->
+<!--                    </tr>-->
+<!--                    </thead>-->
+<!--                    <tbody>-->
+<!--                    </tbody>-->
                 </table>
             </div>
             <div class="modal-footer">
@@ -116,7 +121,7 @@
 <script type="text/javascript">
 
     var tableRow = document.getElementById("tableData");
-
+    var moduleData = null;
     $(function () {
 
         $('#btnUpload').on('click', function () {
@@ -174,17 +179,64 @@
                         row.appendChild(actionCell)
                     }
 
+                    moduleData = res.data.data
                     tableRow.appendChild(row)
+
+                    console.log(moduleData)
                 }
 
             })
         })
         // 绑定点击事件
         $(document).on("click", ".view-details-button", function() {
+            $('#modalData').bootstrapTable({
+                // 启用分页功能
+                pagination: true,
+                // 每页显示的记录数
+                pageSize: 10,
+                // 可供选择的每页记录数
+                pageList: [10, 25, 50],
+                // 显示分页信息
+                showPaginationSwitch: true,
+                // 显示跳转按钮
+                showJumpTo: true,
+                // 启用搜索功能
+                search: true,
+                // 隐藏显示所有数据的按钮
+                showPaginationSwitch: false,
+                // // 搜索输入框的ID
+                // searchSelector: '#searchInput',
+                // 设置分页样式
+                classes: 'table table-bordered table-hover',
+                columns: [{
+                    field: 'code',
+                    title: '元素编码'
+                }, {
+                    field: 'name',
+                    title: '元素名称'
+                }, {
+                    field: 'required',
+                    title: '是否必填'
+                }, {
+                    field: 'type',
+                    title: '数据类型'
+                },{
+                    field: 'oid',
+                    title: 'OID'
+                },{
+                    field: 'xml',
+                    title: 'xml'
+                }],
+                data: moduleData
+            });
+
 
             // 在这里可以打开模态框并显示相应数据
             $("#detailsModal").modal("show");
         });
+
+
+
 
     })
 
