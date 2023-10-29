@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>xml表单信息</title>
+</head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- Bootstrap -->
+<link href="../static/css/bootstrap.min.css" rel="stylesheet">
+<script src="../static/js/jquery-3.7.1.min.js"></script>
+<script src="../static/js/bootstrap.min.js"></script>
+<style type="text/css">
+    .card {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+        word-wrap: break-word;
+        background-color: #9acfea;
+        background-clip: border-box;
+        border: 1px solid rgba(101, 109, 119, .16);
+        border-radius: 4px
+    }
+
+    .txtTask {
+        float: left;
+    }
+
+    /* 自定义模态框的宽度和高度 */
+    .custom-modal .modal-dialog {
+        max-width: 1200px; /* 设置最大宽度 */
+    }
+
+    .custom-modal .modal-content {
+        height: 1000px; /* 设置高度 */
+    }
+
+    .json-td {
+        white-space: pre-wrap;
+    }
+
+    .row-container {
+        display: flex; /* 使用 flex 布局 */
+        align-items: center; /* 垂直居中对齐 */
+    }
+
+    .row-container h5 {
+        margin-right: 10px; /* 可选：设置标题与按钮之间的间距 */
+    }
+
+</style>
+<body>
+
+
+<div class="col">
+    <h2 class="page-title">
+        Xml解析
+    </h2>
+    <!-- 文件选择框 -->
+    <input class="txtTask" type="file" multiple="multiple" id="file1"/>
+    <button id="btnUpload">上传文件</button>
+</div>
+<br>
+<div class="col-12">
+    <div class="card">
+        <div class="table-responsive">
+            <table class="table table-vcenter card-table table-bordered" id="tableData">
+                <tr>
+                    <th>C.1.1(发送者唯一病例报告唯一识别码)</th>
+                    <th>D.1患者（姓名或姓名首字母缩写）</th>
+                    <th>E.i.1.1a（主要来源使用母语报告的反应/事件）</th>
+                    <th>G.k.2.2（主要来源报告的药品名称）</th>
+                    <th>操作</th>
+                    <th class="w-1"></th>
+                </tr>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div id="detailsModal" class="modal custom-modal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="row-container">
+                    <h5 class="page-title">ICSR.xml文件详情</h5>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+            </div>
+            <div class="modal-body">
+                <table id="modalData" class="table" style="white-space: pre-wrap">
+                    <thead>
+                    <tr>
+                        <th>元素编码</th>
+                        <th>元素名称</th>
+                        <th>是否必填</th>
+                        <th>数据类型</th>
+                        <th>OID</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+<!--                <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>-->
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+<script type="text/javascript">
+
+    var tableRow = document.getElementById("tableData");
+
+    $(function () {
+
+        $('#btnUpload').on('click', function () {
+            var files = $('#file1')[0].files
+            if (files.length <= 0) {
+                return alert('请选择文件后再上传')
+            }
+            var fd = new FormData()
+            fd.append('file00', files[0])
+
+            // $('#tableData td').remove();
+
+
+            $.ajax({
+                method: 'POST',
+                url: 'http://localhost:8080/upload2',
+                data: fd,
+                processData: false,
+                contentType: false,
+                success: function (res) {
+                    console.log(res);
+                    console.log(res.data.DShow)
+
+                    var row = document.createElement("tr");
+                    for (var i=0;i<1;i++) {
+                        var CJson = JSON.stringify(res.data.CShow);
+                        var CElement = document.createElement("td");
+                        CElement.innerHTML = CJson
+                        row.appendChild(CElement)
+
+                        var DJson = JSON.stringify(res.data.DShow);
+                        var DElement = document.createElement("td");
+                        DElement.innerHTML = DJson
+                        row.appendChild(DElement)
+
+                        var EJson = JSON.stringify(res.data.EShow);
+                        var EElement = document.createElement("td");
+                        EElement.innerHTML = EJson
+                        row.appendChild(EElement)
+
+                        var GJson = JSON.stringify(res.data.GShow);
+                        var GElement = document.createElement("td");
+                        GElement.innerHTML = GJson
+                        row.appendChild(GElement)
+
+                        // 创建Action单元格
+                        var actionCell = document.createElement("td");
+                        // 创建查看详情按钮
+                        var viewDetailsButton = document.createElement("button");
+                        viewDetailsButton.textContent = "查看详情";
+                        viewDetailsButton.className = "view-details-button btn btn-primary";
+                        viewDetailsButton.setAttribute("data-toggle", "modal");
+                        viewDetailsButton.setAttribute("data-target", "#detailsModal");
+                        actionCell.appendChild(viewDetailsButton);
+                        row.appendChild(actionCell)
+                    }
+
+                    tableRow.appendChild(row)
+                }
+
+            })
+        })
+        // 绑定点击事件
+        $(document).on("click", ".view-details-button", function() {
+
+            // 在这里可以打开模态框并显示相应数据
+            $("#detailsModal").modal("show");
+        });
+
+    })
+
+
+</script>
+</html>
