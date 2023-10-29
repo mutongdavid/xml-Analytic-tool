@@ -15,8 +15,20 @@
 <!--Bootstrap table-->
 <link rel="stylesheet" href="../static/css/bootstrap-table.min.css">
 <script src="../static/js/bootstrap-table.min.js"></script>
-<script src="../static/js/bootstrap-table-zh-CN.min.js"></script>
+<!--<script src="../static/js/bootstrap-table-zh-CN.min.js"></script>-->
+
+
+<!--表格导出-->
+<script src="https://cdn.jsdelivr.net/npm/tableexport.jquery.plugin@1.10.21/tableExport.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tableexport.jquery.plugin@1.10.21/libs/jsPDF/jspdf.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tableexport.jquery.plugin@1.10.21/libs/jsPDF-AutoTable/jspdf.plugin.autotable.js"></script>
+<script src="https://unpkg.com/bootstrap-table@1.22.1/dist/extensions/export/bootstrap-table-export.min.js"></script>
+
 <style type="text/css">
+    #toolbar {
+        margin: 0;
+    }
+
     .card {
         position: relative;
         display: flex;
@@ -53,6 +65,11 @@
 
     .row-container h5 {
         margin-right: 10px; /* 可选：设置标题与按钮之间的间距 */
+    }
+
+    .table-wrapper {
+        max-height: 1100px; /* 设置最大高度 */
+        overflow-y: scroll; /* 启用垂直滚动条 */
     }
 
 </style>
@@ -95,23 +112,28 @@
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
             </div>
-            <div class="modal-body">
-                <table id="modalData" class="table" style="white-space: pre-wrap">
-<!--                    <thead>-->
-<!--                    <tr>-->
-<!--                        <th>元素编码</th>-->
-<!--                        <th>元素名称</th>-->
-<!--                        <th>是否必填</th>-->
-<!--                        <th>数据类型</th>-->
-<!--                        <th>OID</th>-->
-<!--                    </tr>-->
-<!--                    </thead>-->
-<!--                    <tbody>-->
-<!--                    </tbody>-->
+            <div class="modal-body table-wrapper">
+                <table id="modalData" class="table" style="white-space: pre-wrap"
+                       data-show-export="true"
+                       data-click-to-select="true"
+                       data-show-toggle="true"
+                       data-show-columns="true"
+                >
+                    <!--                    <thead>-->
+                    <!--                    <tr>-->
+                    <!--                        <th>元素编码</th>-->
+                    <!--                        <th>元素名称</th>-->
+                    <!--                        <th>是否必填</th>-->
+                    <!--                        <th>数据类型</th>-->
+                    <!--                        <th>OID</th>-->
+                    <!--                    </tr>-->
+                    <!--                    </thead>-->
+                    <!--                    <tbody>-->
+                    <!--                    </tbody>-->
                 </table>
             </div>
             <div class="modal-footer">
-<!--                <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>-->
+                <!--                <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>-->
             </div>
         </div>
     </div>
@@ -146,7 +168,7 @@
                     console.log(res.data.DShow)
 
                     var row = document.createElement("tr");
-                    for (var i=0;i<1;i++) {
+                    for (var i = 0; i < 1; i++) {
                         var CJson = JSON.stringify(res.data.CShow);
                         var CElement = document.createElement("td");
                         CElement.innerHTML = CJson
@@ -188,7 +210,7 @@
             })
         })
         // 绑定点击事件
-        $(document).on("click", ".view-details-button", function() {
+        $(document).on("click", ".view-details-button", function () {
             $('#modalData').bootstrapTable({
                 // 启用分页功能
                 pagination: true,
@@ -208,25 +230,34 @@
                 // searchSelector: '#searchInput',
                 // 设置分页样式
                 classes: 'table table-bordered table-hover',
-                columns: [{
-                    field: 'code',
-                    title: '元素编码'
-                }, {
-                    field: 'name',
-                    title: '元素名称'
-                }, {
-                    field: 'required',
-                    title: '是否必填'
-                }, {
-                    field: 'type',
-                    title: '数据类型'
-                },{
-                    field: 'oid',
-                    title: 'OID'
-                },{
-                    field: 'xml',
-                    title: 'xml'
-                }],
+
+                exportDataType: $(this).val(),
+                exportTypes: ['json', 'xml', 'csv', 'txt', 'sql', 'excel', 'pdf'],
+
+                columns: [
+                    {
+                        field: 'state',
+                        checkbox: true,
+                        visible: $(this).val() === 'selected'
+                    }, {
+                        field: 'code',
+                        title: '元素编码'
+                    }, {
+                        field: 'name',
+                        title: '元素名称'
+                    }, {
+                        field: 'required',
+                        title: '是否必填'
+                    }, {
+                        field: 'type',
+                        title: '数据类型'
+                    }, {
+                        field: 'oid',
+                        title: 'OID'
+                    }, {
+                        field: 'xml',
+                        title: 'xml'
+                    }],
                 data: moduleData
             });
 
@@ -234,10 +265,6 @@
             // 在这里可以打开模态框并显示相应数据
             $("#detailsModal").modal("show");
         });
-
-
-
-
     })
 
 
