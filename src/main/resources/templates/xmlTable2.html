@@ -200,12 +200,14 @@
                         actionCell.appendChild(viewDetailsButton);
                         row.appendChild(actionCell)
                     }
-
-                    moduleData = res.data.data
+                    //将xml数据解析一遍
+                     moduleData = res.data.data
                     tableRow.appendChild(row)
 
                     console.log(moduleData)
                 }
+
+
 
             })
         })
@@ -256,9 +258,18 @@
                         title: 'OID'
                     }, {
                         field: 'xml',
-                        title: 'xml'
+                        title: 'xml',
+                        visible: false
                     }],
-                data: moduleData
+                data: moduleData,
+
+
+                detailView: true,
+                detailFormatter: function(index, row) {
+                    var xml = row.xml;
+                    return '<pre>' + xml + '</pre>';
+                },
+
             });
 
 

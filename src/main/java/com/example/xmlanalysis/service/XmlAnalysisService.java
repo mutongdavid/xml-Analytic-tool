@@ -4,6 +4,7 @@ import com.example.xmlanalysis.domain.XmlData;
 import com.example.xmlanalysis.domain.XmlDto;
 import com.example.xmlanalysis.util.ExcelReader;
 import com.example.xmlanalysis.util.ResourceUtils;
+import com.example.xmlanalysis.util.XmlEscapeUtil;
 import org.dom4j.*;
 import org.dom4j.io.SAXReader;
 import org.springframework.stereotype.Service;
@@ -25,24 +26,26 @@ public class XmlAnalysisService {
         Element rootElement = document.getRootElement();
 
         List<XmlData> xmlData = new ArrayList<>();
-        for (int i=0;i<4;i++) {
+        for (int i = 0; i < 4; i++) {
             List<XmlData> list = ExcelReader.readExcel("data.xlsx", i);
             try {
-
                 traverseNode(rootElement, list);
+
+                List<String> EShow = traverseENode(rootElement,new ArrayList<>(),"");
+//                System.out.println();
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            if (i==0){
+            if (i == 0) {
                 result.setCShow(list.get(0));
             }
-            if (i==1){
+            if (i == 1) {
                 result.setDShow(list.get(0));
             }
-            if (i==2){
+            if (i == 2) {
                 result.setEShow(list.get(0));
             }
-            if (i==3){
+            if (i == 3) {
                 result.setGShow(list.get(0));
             }
             xmlData.addAll(list);
@@ -52,7 +55,7 @@ public class XmlAnalysisService {
     }
 
 
-    private List<XmlData> traverseNode(Node node,List<XmlData> list) {
+    private List<XmlData> traverseNode(Node node, List<XmlData> list) {
         List<String> tmpList = new ArrayList<>();
         if (node instanceof Element) {
             Element element = (Element) node;
@@ -64,13 +67,15 @@ public class XmlAnalysisService {
                 String attributeValue = attribute.getValue();
 //                System.out.println(attributeName.getName() + " = " + attributeValue);
                 //查看是否是oid配配行
-                for (int i=0;i<list.size()-1;i++){
+                for (int i = 0; i < list.size() - 1; i++) {
                     String oid = list.get(i).getOid();
-                    if (attributeValue.equals(oid)){
+                    if (attributeValue.equals(oid)) {
 //                        System.out.println(list.get(i).toString());
-                        if (elementString.contains(list.get(i).getCode())){
+                        if (elementString.contains(list.get(i).getCode())) {
                             tmpList.add(list.get(i).toString());
-                            list.get(i).setXml(elementString.replace("<", "[").replace("/>", "]"));
+                            list.get(i).setXml(XmlEscapeUtil.escapeXml(elementString));
+
+//                            list.get(i).setXml(elementString.replace("<", "[").replace("/>", "]"));
                         }
 //                        System.out.println("节点名：" + element.getName());
 //                        System.out.println(attributeName.getName() + " = " + attributeValue);
@@ -84,8 +89,34 @@ public class XmlAnalysisService {
         Iterator<Element> iterator = ((Element) node).elementIterator();
         while (iterator.hasNext()) {
             Element child = iterator.next();
-            traverseNode(child,list);
+            traverseNode(child, list);
         }
         return list;
     }
+
+
+    private List<String> traverseENode(Node node, List<String> xmlList, String xml) {
+        if (node instanceof Element) {
+            Element element = (Element) node;
+            if (element.getName().equals("originalText") && element.getText().equals("E.i.1.1a")){
+                xmlList.add(xml);
+            }
+
+//            System.out.println("节点名：" + element.getName());
+            if (element.getName().equals("subjectOf2")){
+                xml = element.asXML();
+            }
+
+        }
+
+        Iterator<Element> iterator = ((Element) node).elementIterator();
+        while (iterator.hasNext()) {
+            Element child = iterator.next();
+            traverseENode(child, xmlList , xml);
+        }
+
+        return xmlList;
+
+    }
+
 }
