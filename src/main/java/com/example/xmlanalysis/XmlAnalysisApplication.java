@@ -13,8 +13,4 @@ public class XmlAnalysisApplication {
         SpringApplication.run(XmlAnalysisApplication.class, args);
     }
 
-    @RequestMapping
-    public String hello() {
-        return "hello spring boot!";
-    }
 }

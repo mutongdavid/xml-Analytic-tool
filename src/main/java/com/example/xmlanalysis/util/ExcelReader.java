@@ -15,9 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ExcelReader {
-//    public static void main(String[] args) {
-//        readExcel("data.xlsx");
-//    }
     public static List<XmlData> readExcel(String path, int colum) {
         List<XmlData> result = new ArrayList<>();
         try {

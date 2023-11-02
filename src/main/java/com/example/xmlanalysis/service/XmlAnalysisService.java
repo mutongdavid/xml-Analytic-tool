@@ -88,26 +88,4 @@ public class XmlAnalysisService {
     }
 
 
-    private List<String> traverseENode(Node node, List<String> xmlList, String xml) {
-        if (node instanceof Element) {
-            Element element = (Element) node;
-            if (element.getName().equals("originalText") && element.getText().equals("E.i.1.1a")){
-                xmlList.add(xml);
-            }
-            if (element.getName().equals("subjectOf2")){
-                xml = element.asXML();
-            }
-
-        }
-
-        Iterator<Element> iterator = ((Element) node).elementIterator();
-        while (iterator.hasNext()) {
-            Element child = iterator.next();
-            traverseENode(child, xmlList , xml);
-        }
-
-        return xmlList;
-
-    }
-
 }
