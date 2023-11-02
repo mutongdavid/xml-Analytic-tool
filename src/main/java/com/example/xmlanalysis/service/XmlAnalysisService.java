@@ -31,8 +31,6 @@ public class XmlAnalysisService {
             try {
                 traverseNode(rootElement, list);
 
-                List<String> EShow = traverseENode(rootElement,new ArrayList<>(),"");
-//                System.out.println();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -65,7 +63,6 @@ public class XmlAnalysisService {
             for (Attribute attribute : attributes) {
                 QName attributeName = attribute.getQName();
                 String attributeValue = attribute.getValue();
-//                System.out.println(attributeName.getName() + " = " + attributeValue);
                 //查看是否是oid配配行
                 for (int i = 0; i < list.size() - 1; i++) {
                     String oid = list.get(i).getOid();
@@ -74,11 +71,7 @@ public class XmlAnalysisService {
                         if (elementString.contains(list.get(i).getCode())) {
                             tmpList.add(list.get(i).toString());
                             list.get(i).setXml(XmlEscapeUtil.escapeXml(elementString));
-
-//                            list.get(i).setXml(elementString.replace("<", "[").replace("/>", "]"));
                         }
-//                        System.out.println("节点名：" + element.getName());
-//                        System.out.println(attributeName.getName() + " = " + attributeValue);
                     }
                 }
             }
@@ -101,8 +94,6 @@ public class XmlAnalysisService {
             if (element.getName().equals("originalText") && element.getText().equals("E.i.1.1a")){
                 xmlList.add(xml);
             }
-
-//            System.out.println("节点名：" + element.getName());
             if (element.getName().equals("subjectOf2")){
                 xml = element.asXML();
             }

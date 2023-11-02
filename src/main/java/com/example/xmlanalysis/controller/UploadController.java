@@ -24,41 +24,8 @@ public class UploadController {
     XmlAnalysisService xmlAnalysisService;
 
     //文件上传
-    @RequestMapping("/upload")
-    public String uploadFile(@RequestParam("file00") MultipartFile file, Model model) {
-        try {
-            InputStream inputStream = file.getInputStream();
-            byte[] bytes = new byte[(int) file.getSize()];
-            inputStream.read(bytes);
-            System.out.println(new String(bytes));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        System.out.println("文件上传成功！");
-
-//        List<String> list = new ArrayList<String>();
-//        list.add("C.1.1");
-//        list.add("D.1");
-//        list.add("E.i.1.1a,E.i.1.1a,E.i.1.1a,E.i.1.1a,E.i.1.1a,E.i.1.1a");
-//        list.add("G.k.2.2,G.k.2.2,G.k.2.2");
-//
-//        model.addAttribute("rData",list);
-
-        //组装数据返回给前端
-        model.addAttribute("C","C.1.1");
-        model.addAttribute("D","D.1");
-        model.addAttribute("E","E.i.1.1a,E.i.1.1a,E.i.1.1a,E.i.1.1a,E.i.1.1a,E.i.1.1a");
-        model.addAttribute("G","G.k.2.2,G.k.2.2,G.k.2.2");
-
-        return "xmlTable";
-
-    }
-
-
-
-    @PostMapping("/upload2")
-    @ResponseBody
-    public ResultDto uploadFile(@RequestParam("file00") MultipartFile file) throws Exception {
+//    @RequestMapping("/upload")
+//    public String uploadFile(@RequestParam("file00") MultipartFile file, Model model) {
 //        try {
 //            InputStream inputStream = file.getInputStream();
 //            byte[] bytes = new byte[(int) file.getSize()];
@@ -69,6 +36,22 @@ public class UploadController {
 //        }
 //        System.out.println("文件上传成功！");
 
+
+//        //组装数据返回给前端
+//        model.addAttribute("C","C.1.1");
+//        model.addAttribute("D","D.1");
+//        model.addAttribute("E","E.i.1.1a,E.i.1.1a,E.i.1.1a,E.i.1.1a,E.i.1.1a,E.i.1.1a");
+//        model.addAttribute("G","G.k.2.2,G.k.2.2,G.k.2.2");
+
+//        return "xmlTable";
+//
+//    }
+
+
+
+    @PostMapping("/upload2")
+    @ResponseBody
+    public ResultDto uploadFile(@RequestParam("file00") MultipartFile file) throws Exception {
 
         XmlDto result = xmlAnalysisService.translate(file.getInputStream());
 
